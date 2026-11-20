@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>防碰撞系统可视化调试工具</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/vendor/eventemitter2.min.js"></script>
+    <script src="/vendor/roslib.min.js"></script>
+    <script src="/vendor/three.min.js"></script>
+    <script src="/vendor/OrbitControls.js"></script>
+  </head>
+  <body>
+    <main class="layout">
+      <section class="panel hero">
+        <div>
+          <p class="eyebrow">Collision Guard Visual Debugger</p>
+          <h1>防碰撞系统可视化调试工具</h1>
+        </div>
+        <div class="hero-controls">
+          <button id="refreshAll" class="secondary">刷新全部</button>
+        </div>
+      </section>
+
+      <section class="workspace-layout">
+        <aside class="panel service-sidebar">
+          <div class="section-head sidebar-head">
+            <div>
+              <h2>服务列表</h2>
+            </div>
+            <span id="serviceCount" class="count-badge">0</span>
+          </div>
+          <div id="serviceList" class="service-list"></div>
+        </aside>
+
+        <div class="content-stack">
+          <article class="panel service-card">
+            <div class="section-head">
+              <div>
+                <h2>服务管理</h2>
+              </div>
+              <div class="service-head-actions">
+                <span id="statusBadge" class="badge">unknown</span>
+                <button id="webVisualizeButton" class="secondary hidden" type="button">网页可视化</button>
+                <button data-action="start" type="button">启动服务</button>
+                <button data-action="stop" class="secondary" type="button">停止服务</button>
+                <button data-action="restart" class="secondary" type="button">重启服务</button>
+              </div>
+            </div>
+            <div class="status-summary">
+              <div>
+                <span class="summary-label">当前服务状态</span>
+                <strong id="statusText">unknown</strong>
+              </div>
+              <button id="openLogs" class="secondary">查看运行日志</button>
+            </div>
+            <section id="progressSection" class="progress-panel hidden">
+              <div class="progress-head">
+                <div>
+                  <span class="summary-label">校准进度</span>
+                  <strong id="progressText">未开始</strong>
+                </div>
+                <span id="progressPercent" class="progress-percent">0%</span>
+              </div>
+              <div class="progress-track">
+                <div id="progressBar" class="progress-bar"></div>
+              </div>
+              <div id="progressMeta" class="progress-meta"></div>
+            </section>
+            <dl id="statusMeta" class="meta"></dl>
+            <label class="toggle">
+              <input type="checkbox" id="enableToggle" />
+              <span>开机自启</span>
+            </label>
+          </article>
+
+          <section id="plcStatusCard" class="panel plc-panel hidden">
+            <div class="section-head">
+              <div>
+                <h2>PLC状态</h2>
+              </div>
+            </div>
+            <div id="plcStatusGrid" class="plc-grid"></div>
+          </section>
+
+          <section id="rslidarStatusCard" class="panel rslidar-panel hidden">
+            <div class="section-head">
+              <div>
+                <h2>雷达状态</h2>
+              </div>
+            </div>
+            <div id="rslidarStatusSummary" class="rslidar-summary muted">未连接</div>
+            <div id="rslidarStatusGrid" class="rslidar-grid"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <h2>配置管理</h2>
+              </div>
+              <span id="configPath" class="muted"></span>
+            </div>
+            <textarea id="configEditor" spellcheck="false"></textarea>
+            <div class="actions split">
+              <label class="toggle">
+                <input type="checkbox" id="restartAfterSave" checked />
+                <span>保存后重启服务</span>
+              </label>
+              <button id="saveConfig">保存配置</button>
+            </div>
+          </section>
+
+          <section id="webvizSection" class="panel webviz-panel hidden">
+            <div class="section-head webviz-head">
+              <div>
+                <h2>网页可视化</h2>
+              </div>
+              <div class="webviz-tools">
+                <label class="field compact">
+                  <span>雷达</span>
+                  <select id="webvizLidarSelect">
+                    <option value="down">down</option>
+                    <option value="front">front</option>
+                    <option value="left">left</option>
+                    <option value="right">right</option>
+                  </select>
+                </label>
+                <button id="webvizDefaultView" class="secondary" type="button">默认视角</button>
+                <button id="webvizSaveView" class="secondary" type="button">设置为默认视角</button>
+                <button id="webvizReconnect" class="secondary" type="button">重连</button>
+                <button id="webvizClose" class="secondary" type="button">关闭</button>
+              </div>
+            </div>
+            <div class="webviz-status-row">
+              <span id="webvizStatus" class="muted">未连接</span>
+              <span id="webvizTopic" class="topic-badge">PointCloud2: -</span>
+            </div>
+            <div id="webvizCanvas" class="webviz-canvas"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div id="logModal" class="modal hidden" aria-hidden="true">
+      <div id="logBackdrop" class="modal-backdrop"></div>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="logModalTitle">
+        <div class="section-head modal-head">
+          <div>
+            <h2 id="logModalTitle">运行日志</h2>
+          </div>
+          <button id="closeLogs" class="secondary">关闭</button>
+        </div>
+        <div class="log-tools">
+          <label class="field compact lines-field">
+            <span>日志行数</span>
+            <input id="logLines" type="number" min="50" max="2000" step="50" value="200" />
+          </label>
+          <button id="refreshLogs" class="secondary">刷新日志</button>
+        </div>
+        <pre id="logViewer" class="log-viewer"></pre>
+      </section>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+[Unit]
+Description=Collision Guard Visual Debugger
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/collision-guard-visual-debugger/current
+EnvironmentFile=-/etc/default/collision-guard-visual-debugger
+ExecStart=/usr/bin/python3 /opt/collision-guard-visual-debugger/current/app.py
+Restart=always
+RestartSec=2
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/etc/collision-guard-visual-debugger /tmp
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

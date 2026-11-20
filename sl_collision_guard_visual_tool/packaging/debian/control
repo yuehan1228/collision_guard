@@ -1,0 +1,10 @@
+Package: collision-guard-visual-debugger
+Version: 0.1.0
+Section: admin
+Priority: optional
+Architecture: all
+Maintainer: Collision Guard Tool Maintainers <ops@example.com>
+Depends: python3, sudo, systemd, xdg-utils
+Description: Visualization and debugging tool for collision guard systems
+ A local web-based panel for visualizing, debugging, controlling, and editing
+ a configured set of collision guard related systemd services on an industrial PC.

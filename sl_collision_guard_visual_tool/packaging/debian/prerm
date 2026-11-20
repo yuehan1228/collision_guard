@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+
+if [ "${1:-}" = "remove" ]; then
+    systemctl stop collision-guard-visual-debugger.service || true
+    systemctl disable collision-guard-visual-debugger.service || true
+fi

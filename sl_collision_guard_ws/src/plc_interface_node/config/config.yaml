@@ -1,0 +1,6 @@
+plc_interface_node:
+  ros__parameters:
+    plc_ip: "192.168.123.116"
+    plc_read_port: 2105
+    plc_write_port: 2107
+    read_register_count: 20

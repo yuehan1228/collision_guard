@@ -1,0 +1,14 @@
+[Unit]
+Description=ROS Bridge WebSocket Service
+After=network.target
+
+[Service]
+Type=simple
+User=lhp
+WorkingDirectory=/home/lhp/winhai/code/sl_collision_guard_ws
+ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/lhp/winhai/code/sl_collision_guard_ws/install/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml port:=9090'
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

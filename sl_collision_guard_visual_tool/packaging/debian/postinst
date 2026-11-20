@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+install -d /etc/collision-guard-visual-debugger
+
+if [ ! -f /etc/collision-guard-visual-debugger/services.json ]; then
+    cp /opt/collision-guard-visual-debugger/current/config/services.json /etc/collision-guard-visual-debugger/services.json
+fi
+
+systemctl daemon-reload
+systemctl enable --now collision-guard-visual-debugger.service

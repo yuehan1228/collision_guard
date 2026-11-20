@@ -1,0 +1,45 @@
+{
+  "services": [
+    {
+      "id": "collision-guard-run",
+      "display_name": "Collision Guard Run Service",
+      "unit": "collision_guard_run.service",
+      "visualization_unit": "collision_guard_view.service",
+      "web_visualization_unit": "rosbridge_websocket.service",
+      "webviz_lidars": ["down", "front", "left", "right"],
+      "webviz_point_topic_template": "/collision/{lidar}/processed_points",
+      "webviz_protection_topic_template": "/collision/{lidar}/protection_zone",
+      "config_path": "/home/winhai/workspace/sl_collision_guard_ws/install/collision_guard/share/collision_guard/config/config.yaml",
+      "config_format": "yaml",
+      "restart_after_save": true
+    },
+    {
+      "id": "collision-guard-calibrate",
+      "display_name": "Collision Guard Calibrate Service",
+      "unit": "collision_guard_calibrate.service",
+      "progress_path": "/tmp/collision_guard_calibrate_progress.json",
+      "config_path": "/home/winhai/workspace/sl_collision_guard_ws/install/collision_guard/share/collision_guard/config/config.yaml",
+      "config_format": "yaml",
+      "restart_after_save": true
+    },
+    {
+      "id": "plc-interface",
+      "display_name": "PLC Interface Service",
+      "unit": "plc_interface.service",
+      "config_path": "/home/winhai/workspace/sl_collision_guard_ws/install/plc_interface/share/plc_interface/config/config.yaml",
+      "config_format": "yaml",
+      "restart_after_save": true
+    },
+    {
+      "id": "rslidar-sdk",
+      "display_name": "RSLiDAR SDK Service",
+      "unit": "rslidar_sdk.service",
+      "status_bridge_unit": "rosbridge_websocket.service",
+      "webviz_lidars": ["left", "right", "down", "front"],
+      "webviz_point_topic_template": "/rslidar_points/{lidar}",
+      "config_path": "/home/winhai/workspace/sl_collision_guard_ws/install/rslidar_sdk/share/rslidar_sdk/config/config_multi.yaml",
+      "config_format": "yaml",
+      "restart_after_save": true
+    }
+  ]
+}
